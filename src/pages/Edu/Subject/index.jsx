@@ -4,14 +4,19 @@ import { Button, Table } from 'antd'
 // 导入antd-图标
 import { PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons'
 
+// 引入redux 中的代码
+import {getSubjectList, SubjectList} from './redux'
+// 导入定义的发送请求的方法
+// import {reqGetSubjectList} from '@api/edu/subject'
 //导入样式文件
 import './index.less'
+import { connect } from 'react-redux'
 
 const columns = [
   // columns 定义表格的列
   // title属性: 表示列的名称
   // dataIndex决定: 这一列展示的是data中哪一项的数据
-  { title: '分类名称', dataIndex: 'name', key: 'name' },
+  { title: '分类名称', dataIndex: 'title', key: 'name' },
 
   {
     title: '操作',
@@ -66,9 +71,32 @@ const data = [
       'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.'
   }
 ]
+@connect(state => ({SubjectList: state.SubjectList}),{getSubjectList})
+class Subject extends Component {
+   currentPage = 1
+  // state = {
+  //   subject: {}   // 用于存储数据
+  // }
+  componentDidMount() {
+    // this.getSubjectList(1, 10)
+    this.props.getSubjectList(1, 10)
+  }
 
-export default class Subject extends Component {
+  handlePageChange = (page, pageSize) => {
+    // this.getSubjectList(page, pageSize)
+    this.currentPage = page
+    this.props.getSubjectList(page, pageSize)
+  }
+
+  handleSizeChange = (current, size) => {
+    // this.getSubjectList(current, size)
+    this.currentPage = current
+    this.props.getSubjectList(current, size)
+  }
+
   render() {
+    // console.log(this.props)
+    // console.log(this.state.subject.items)
     return (
       <div className='subject'>
         <Button type='primary' className='subject-btn'>
@@ -88,9 +116,22 @@ export default class Subject extends Component {
             rowExpandable: record => record.name !== 'Not Expandable'
           }}
           //表示里面的数据
-          dataSource={data}
+          dataSource={this.props.SubjectList.items}
+          
+          rowKey='_id'
+          pagination={{
+            total: this.props.SubjectList.total, //total表示数据总数
+            showQuickJumper: true, //是否显示快速跳转
+            showSizeChanger: true, // 是否显示修改每页显示数据数量
+            pageSizeOptions:['3','5','10'], //设置每天显示数据数量的配置项
+            defaultPageSize:5, //每页默认显示数据条数 默认是10,
+            onChange: this.handlePageChange, //页码改变的时候触发,
+            onShowSizeChange: this.handleSizeChange, //一页展示几条数据变化时触发 current 当前页码, size 一页几条
+            current: this.currentPage
+         }}
         />
       </div>
     )
   }
 }
+export default Subject

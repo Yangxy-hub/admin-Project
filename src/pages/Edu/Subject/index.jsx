@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 export default class Subject extends Component {
   render() {
-    return <div>Subject...</div>;
+    return <div>
+      测试Subject...
+    </div>;
   }
 }

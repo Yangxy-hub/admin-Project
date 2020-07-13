@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, message, Tooltip, Modal, Alert, Table } from "antd";
+
 import {
   FullscreenOutlined,
   RedoOutlined,
@@ -15,7 +16,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
-
+import {getLessonList} from './redux'
 import "./index.less";
 
 dayjs.extend(relativeTime);
@@ -27,7 +28,9 @@ dayjs.extend(relativeTime);
     //   state.course.permissionValueList,
     //   "Course"
     // )
-  })
+    chapterList: state.chapterList
+  }),
+  {getLessonList}
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -89,7 +92,13 @@ class Chapter extends Component {
       selectedRowKeys,
     });
   };
-
+  // handleClickExpand  定义的点击展开按钮的事件处理函数
+  handleClickExpand = (expand, record) => {
+    console.log(expand, record)
+    if(expand) {
+      this.props.getLessonList(record._id)
+    }
+  }
   render() {
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
 
@@ -290,8 +299,11 @@ class Chapter extends Component {
           <Table
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={data}
-            rowKey="id"
+            dataSource={this.props.chapterList.items}
+            rowKey="_id"
+            expandable = {{
+              onExpand: this.handleClickExpand
+            }}
           />
         </div>
 

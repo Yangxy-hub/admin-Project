@@ -53,7 +53,7 @@ const updateSubjectListSync = data => ({
 export const updateSubjectList = (id, title) => {
   return dispatch => {
    return reqUpdateSubjectList(id, title).then(res => {
-      dispatch(updateSubjectListSync(id, title))
+      dispatch(updateSubjectListSync({id, title}))
       return res
     })
   }

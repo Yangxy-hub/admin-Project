@@ -87,9 +87,11 @@ class Subject extends Component {
 
     if(subjectTitle.length === 0) {
       message.error('课程内容不能为空')
+      return
     }
     if(this.oldTitle === subjectTitle){
       message.error('课程分类名称不能和之前的相同')
+      return 
     }
     await this.props.updateSubjectList(subjectId, subjectTitle)
     message.success('更改成功')
@@ -104,7 +106,7 @@ class Subject extends Component {
       title: (
         <>
           <div>
-      确定要删除<span style={{color: 'pink', fontSize: 20}}>{value.title}</span>吗?
+      确定要删除<span style={{color: 'pink', fontSize: 23}}>{value.title}</span>吗?
           </div>
         </>
       ),

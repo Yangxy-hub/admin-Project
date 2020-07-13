@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, message, Table, Tooltip, Modal } from "antd";
+
 import {
   FormOutlined,
   DeleteOutlined,
@@ -633,7 +634,7 @@ class Course extends Component {
     return (
       <div>
         <div className="course-search">
-          <SearchForm />
+          <SearchForm onClick={this.handleCouseList}/>
         </div>
 
         <div className="course-table">

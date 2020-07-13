@@ -7,9 +7,9 @@ import { user } from "@comps/Authorized/redux";
 import { userList } from "@pages/Acl/User/redux";
 import { roleList } from "@pages/Acl/Role/redux";
 import { menuList } from "@pages/Acl/Permission/redux";
-// 增加了 subject 功能代码
+// 增加了 subject 功能代码  和 chapterList 的 reduer
 import { SubjectList } from "@pages/Edu/Subject/redux";
-
+import {chapterList} from '@pages/Edu/Chapter/redux'
 
 
 export default combineReducers({
@@ -19,5 +19,6 @@ export default combineReducers({
   userList,
   roleList,
   menuList,
-  SubjectList
+  SubjectList,
+  chapterList
 });

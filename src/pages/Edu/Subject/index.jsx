@@ -1,27 +1,29 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 // 导入antd组件
-import { Button, Table, Tooltip, Input} from 'antd'
+import { Button, Table, Tooltip, Input, message, Modal} from 'antd'
 // 导入antd-图标
-import { PlusOutlined, DeleteOutlined, FormOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, FormOutlined, ExclamationCircleOutlined} from '@ant-design/icons'
 
 // 引入redux 中的代码
-import {getSubjectList, getSecSubjectList} from './redux'
+import {getSubjectList, getSecSubjectList, updateSubjectList, subjectList} from './redux'
 // 导入定义的发送请求的方法
 // import {reqGetSubjectList} from '@api/edu/subject'
-
+// 导入删除课程分类数据的方法
+import {reqDelSubject} from '@api/edu/subject'
 //导入样式文件
 import './index.less'
-import { connect } from 'react-redux'
-
-@connect(state => ({subjectList: state.SubjectList}),{getSubjectList,getSecSubjectList})
+const {confirm } = Modal
+@connect(state => ({subjectList: state.SubjectList}),{getSubjectList,getSecSubjectList, updateSubjectList})
 
 class Subject extends Component {
    currentPage = 1
+   pageSize = 10
     state = {
       // 1.  如果subjectId 没有表示表格每一行直接展示课程分类的title, 如果有值(就是要修改数据的id ) 就展示input 
       // 2. 修改数据需要subjectid
       subjectId: '',
-      subjectTitle: ''
+      subjectTitle: '',
     }
   componentDidMount() {
     // this.getSubjectList(1, 10)
@@ -37,8 +39,10 @@ class Subject extends Component {
 
   handleSizeChange = (current, size) => {
     // this.getSubjectList(current, size)
-    this.currentPage = current
     this.props.getSubjectList(current, size)
+    // 动态给currentPage赋值 
+    this.currentPage = current
+    this.pageSize = size
   }
 
   handleAddSubject = () => {
@@ -60,15 +64,75 @@ class Subject extends Component {
         subjectId: value._id,
         subjectTitle: value.title
       })
+      this.oldTitle = value.title
     }
   }
   // 修改数据时， 受控组件input 的change回调函数
   handleTitleChange = e => {
     this.setState({
-      subjectTitle: e.target.value
+      subjectTitle: e.target.value.trim()
     })
   }
 
+  // 取消按钮的事件处理函数
+  handleCancle = () => {
+    this.setState({
+      subjectId: '',
+      subjectTitle: ''
+    })
+  }
+  // 更新确认按钮的事件处理函数
+  handleUpdate = async () => {
+    let {subjectId, subjectTitle} = this.state
+
+    if(subjectTitle.length === 0) {
+      message.error('课程内容不能为空')
+    }
+    if(this.oldTitle === subjectTitle){
+      message.error('课程分类名称不能和之前的相同')
+    }
+    await this.props.updateSubjectList(subjectId, subjectTitle)
+    message.success('更改成功')
+    // 手动调用取消按钮的事件处理函数， 让表格行展示内容
+    this.handleCancle()
+
+  }
+
+  // 删除操作
+  handleDel = value => () => {
+    confirm({
+      title: (
+        <>
+          <div>
+      确定要删除<span style={{color: 'pink', fontSize: 20}}>{value.title}</span>吗?
+          </div>
+        </>
+      ),
+      icon: <ExclamationCircleOutlined />,
+      onOk: async ()=> {
+        // 删除这条数据的操作
+        await reqDelSubject(value._id)
+        message.success('删除成功了')
+
+        // 1. 是否是第一页        this.currentPage !== 1
+        // 2. 是否是最后一条数据   this.props.subjectList.items.length === 1
+        // 3.是否是最后一页        totalPage === currentPage
+        const totalPage = Math.ceil(this.props.subjectList.total/this.pageSize)
+        // console.log('总数据',this.props.subjectList.total)
+        // console.log('一页多少条',this.pageSize)
+
+        // console.log('当前第几页',this.currentPage)
+        // console.log('数据列表长度',this.props.subjectList.items.length)
+        // console.log('总页数',totalPage)
+
+        if(totalPage === this.currentPage && this.currentPage !== 1 && this.props.subjectList.items.length === 1) {
+          this.props.getSubjectList(--this.currentPage, this.pageSize)
+          return 
+        }
+        this.props.getSubjectList(this.currentPage, this.pageSize)
+      }
+    })
+  }
   render() {
     // console.log(this.props)
     // console.log(this.props.subjectList)
@@ -103,10 +167,10 @@ class Subject extends Component {
           if(this.state.subjectId === value._id) {
             return (
               <>
-                <Button type='primary' className='update-btn'>
+                <Button type='primary' className='update-btn' onClick={this.handleUpdate}>
                   确认
                 </Button>
-                <Button type='danger'>取消</Button>
+                <Button type='danger' onClick={this.handleCancle}>取消</Button>
               </>
             )
           }
@@ -118,8 +182,8 @@ class Subject extends Component {
               <FormOutlined/>
               </Button>
             </Tooltip>
-            <Tooltip title='删除课程分类'>
-              <Button type='danger'>
+            <Tooltip title='删除课程分类' >
+              <Button type='danger' onClick={this.handleDel(value)}>
                 <DeleteOutlined />
               </Button>
             </Tooltip>

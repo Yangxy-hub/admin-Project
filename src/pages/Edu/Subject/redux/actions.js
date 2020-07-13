@@ -1,12 +1,17 @@
 import {
   reqGetSubjectList,
-  reqGetSecSubjectList
+  reqGetSecSubjectList,
+  reqUpdateSubjectList,
+  
 } from "@api/edu/subject";
 
 import {
   GET_SUBJECT_LIST,
-  GET_SECSUBJECT_LIST
+  GET_SECSUBJECT_LIST,
+  UPDATE_SUBJECTLIST,
+  
 } from "./constants";
+import { reqDelSubject } from "../../../../api/edu/subject";
 /**
  * 获取一级分类列表信息
  */
@@ -38,3 +43,18 @@ export const getSecSubjectList = (parentId) => {
     });
   };
 };
+
+// 更新课程
+const updateSubjectListSync = data => ({
+  type: UPDATE_SUBJECTLIST,
+  data
+})
+
+export const updateSubjectList = (id, title) => {
+  return dispatch => {
+   return reqUpdateSubjectList(id, title).then(res => {
+      dispatch(updateSubjectListSync(id, title))
+      return res
+    })
+  }
+}

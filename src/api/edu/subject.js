@@ -32,3 +32,23 @@ export function reqAddSubjectList(title, parentId) {
     }
   })
 }
+
+// 更新课程
+export function reqUpdateSubjectList(id, title) {
+  return request({
+    url: `${BASE_URL}/update`,
+    method: 'PUT',
+    data: {
+      id,
+      title
+    }
+  })
+}
+
+// 删除课程
+export function reqDelSubject(id) {
+  return request({
+    url: `${BASE_URL}/remove/${id}`,
+    method: 'DELETE'
+  })
+}

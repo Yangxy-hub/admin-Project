@@ -1,6 +1,7 @@
 import {
   GET_SUBJECT_LIST,
-  GET_SECSUBJECT_LIST
+  GET_SECSUBJECT_LIST,
+  UPDATE_SUBJECTLIST
 } from "./constants";
 
 const initSubjectList = {
@@ -33,6 +34,24 @@ export default function SubjectList(prevState = initSubjectList, action) {
       }
         // 刚才的代码一直在修改原来的数据,redux也是浅层对比
       // 所以要创建一个新的对象
+      return {
+        ...prevState
+    }
+
+    case UPDATE_SUBJECTLIST: 
+        prevState.items.forEach(subject => {
+          if(subject._id === action.data.id) {
+            // 修改title, 然后return 掉
+            subject.title = action.data.title
+            return
+          }
+
+          subject.children.forEach(secSubject => {
+            if(secSubject._id === action.data.id) {
+              secSubject.title = action.data.title
+            }
+          })
+        })
       return {
         ...prevState
       }

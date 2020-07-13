@@ -72,7 +72,7 @@ class addSubject extends Component {
         // 发送请求新增课程分类
       await reqAddSubjectList(values.subjectname, values.parentid)
       // console.log(res)
-        console.log( values)
+        // console.log( values)
         
         message.success('课程分类添加成功')
         // 跳回到subjectList 页面

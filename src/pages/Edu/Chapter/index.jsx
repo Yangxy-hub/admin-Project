@@ -22,7 +22,7 @@ import "./index.less";
 dayjs.extend(relativeTime);
 
 @connect(
-  (state) => ({
+  state => ({
     // courseList: state.courseList
     // permissionValueList: filterPermissions(
     //   state.course.permissionValueList,
@@ -99,6 +99,11 @@ class Chapter extends Component {
       this.props.getLessonList(record._id)
     }
   }
+
+  // 点击跳转到新增课时页面
+  handleGoAddLesson = () => {
+    this.props.history.push('/edu/chapter/addlesson')
+  }
   render() {
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
 
@@ -119,12 +124,12 @@ class Chapter extends Component {
         width: 300,
         fixed: "right",
         render: (data) => {
-          if ("free" in data) {
+          // if ("free" in data) {
             return (
               <div>
-                <Tooltip title="查看详情">
-                  <Button>
-                    <SettingOutlined />
+                <Tooltip title="新增课时">
+                  <Button type='primary' onClick={this.handleGoAddLesson}>
+                    <PlusOutlined />
                   </Button>
                 </Tooltip>
                 <Tooltip title="更新章节">
@@ -140,7 +145,7 @@ class Chapter extends Component {
               </div>
             );
           }
-        },
+        // },
       },
     ];
 
@@ -221,40 +226,7 @@ class Chapter extends Component {
 
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.onSelectChange,
-      // hideDefaultSelections: true,
-      // selections: [
-      //   Table.SELECTION_ALL,
-      //   Table.SELECTION_INVERT,
-      //   {
-      //     key: "odd",
-      //     text: "Select Odd Row",
-      //     onSelect: changableRowKeys => {
-      //       let newSelectedRowKeys = [];
-      //       newSelectedRowKeys = changableRowKeys.filter((key, index) => {
-      //         if (index % 2 !== 0) {
-      //           return false;
-      //         }
-      //         return true;
-      //       });
-      //       this.setState({ selectedRowKeys: newSelectedRowKeys });
-      //     }
-      //   },
-      //   {
-      //     key: "even",
-      //     text: "Select Even Row",
-      //     onSelect: changableRowKeys => {
-      //       let newSelectedRowKeys = [];
-      //       newSelectedRowKeys = changableRowKeys.filter((key, index) => {
-      //         if (index % 2 !== 0) {
-      //           return true;
-      //         }
-      //         return false;
-      //       });
-      //       this.setState({ selectedRowKeys: newSelectedRowKeys });
-      //     }
-      //   }
-      // ]
+      onChange: this.onSelectChange
     };
 
     return (

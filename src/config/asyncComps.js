@@ -19,9 +19,10 @@ const Chapter = () => lazy(() => import("@pages/Edu/Chapter"));
 const Comment = () => lazy(() => import("@pages/Edu/Comment"));
 const Course = () => lazy(() => import("@pages/Edu/Course"));
 const Teacher = () => lazy(() => import("@pages/Edu/Teacher"));
-
+// yang 新增课程分类和课程
 const Subject = () => lazy(() => import('@pages/Edu/Subject'))
 const AddSubject = () => lazy(() => import('@pages/Edu/Subject/components/addSubject'))
+const AddLesson = () => lazy(() => import('@pages/Edu/Chapter/components/AddLesson'))
 
 const Settings = () => lazy(() => import("@pages/User/Settings"));
 const Center = () => lazy(() => import("@pages/User/Center"));
@@ -44,5 +45,6 @@ export default {
   Center,
   Test,
   Subject,
-  AddSubject
+  AddSubject,
+  AddLesson
 };

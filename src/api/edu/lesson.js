@@ -32,3 +32,15 @@ export function reqAddLesson({ chapterId, title, free, video }) {
     }
   })
 }
+
+// 删除课时
+// /admin/edu/chapter/batchRemove
+export function reqBatchDelLesson (lessonIds) {
+  return request ({
+      url: `${BASE_URL}/batchRemove`,
+      method: 'DELETE',
+      data: {
+        idList: lessonIds
+      }
+  })
+}

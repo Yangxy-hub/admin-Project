@@ -13,3 +13,15 @@ export function reqGetChaterList({page, limit,courseId}) {
         }
     })
 }
+
+// 删除章节数据
+// /admin/edu/chapter/batchRemove
+export function reqBatchDelChapter (chapterIds) {
+    return request ({
+        url: `${BASE_URL}/batchRemove`,
+        method: 'DELETE',
+        data: {
+           idList: chapterIds
+        }
+    })
+}

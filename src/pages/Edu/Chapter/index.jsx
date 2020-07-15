@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Button, message, Tooltip, Modal, Alert, Table } from "antd";
-
+import { Button, message, Tooltip, Modal, Alert, Table} from "antd";
+import Player from 'griffith'
+import screenfull from 'screenfull'
 import {
   FullscreenOutlined,
   RedoOutlined,
@@ -16,7 +17,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { connect } from "react-redux";
 import SearchForm from "./SearchForm";
-import {getLessonList} from './redux'
+import {getLessonList, batchDelChapter,batchDelLesson } from './redux'
+
 import "./index.less";
 
 dayjs.extend(relativeTime);
@@ -30,7 +32,7 @@ dayjs.extend(relativeTime);
     // )
     chapterList: state.chapterList
   }),
-  {getLessonList}
+  {getLessonList, batchDelChapter, batchDelLesson}
   // { getcourseList }
 )
 class Chapter extends Component {
@@ -39,16 +41,28 @@ class Chapter extends Component {
     previewVisible: false,
     previewImage: "",
     selectedRowKeys: [],
+    video: ''
   };
 
-  showImgModal = (img) => {
-    return () => {
+  // video就是要预览的视频的路径
+  showModal = video => () => {
       this.setState({
         previewVisible: true,
-        previewImage: img,
+        video
       });
-    };
   };
+
+  // 函数珂里化
+// showModal = video => {
+//   return ()=>{
+//     this.setState({
+//       previewVisible: true,
+//       video
+//     });
+//   }
+// }
+
+
 
   handleImgModal = () => {
     this.setState({
@@ -96,13 +110,61 @@ class Chapter extends Component {
   handleClickExpand = (expand, record) => {
     console.log(expand, record)
     if(expand) {
+      console.log(this.props)
       this.props.getLessonList(record._id)
     }
   }
 
   // 点击跳转到新增课时页面
-  handleGoAddLesson = () => {
-    this.props.history.push('/edu/chapter/addlesson')
+  handleGoAddLesson = data => () => {
+    // console.log(this.props)
+    this.props.history.push('/edu/chapter/addlesson',data)
+  }
+
+  // 批量删除按钮的事件处理函数 
+  handleBatchDel = () => {
+    Modal.confirm({
+      title: '确定要批量删除吗?',
+      onOk:async () => {
+        // selectedRowKeys  里面存储的是所以选中的课时
+        let chapterIds = []   // 存储选中章节id
+        let lessonIds = []  // 存储选中课时id
+
+      // 拿到所以选中的id 
+      let selectedRowKeys = this.state.selectedRowKeys
+      // 所有的章节数据
+      let chapterList = this.props.chapterList.items
+
+      // 遍历找到章节id 
+      chapterList.forEach(chapter => {
+        // 找到每一条章节id
+        let chapterId = chapter._id
+
+        // 如果selectedRowKeys里面有chapterId,就返回这个id对应的下标,否则返回-1
+        let index = selectedRowKeys.indexOf(chapterId)
+        if(index > -1) {
+          // 证明找到了
+          let newArr = selectedRowKeys.splice(index, 1)
+          chapterIds.push(newArr[0])
+        }
+      })
+
+      lessonIds = [...selectedRowKeys]
+
+     await this.props.batchDelChapter(chapterIds)
+     await this.props.batchDelLesson(lessonIds)
+
+      console.log(chapterIds)
+      console.log(selectedRowKeys)
+
+      }
+    })
+  }
+
+  // 全屏功能
+  handlescreenFull = () => {
+    // screenfull.request()   // 整个页面全屏 只能打开全屏 按esc 退出全屏
+    screenfull.toggle() // 可以展开也可以关闭
   }
   render() {
     const { previewVisible, previewImage, selectedRowKeys } = this.state;
@@ -120,25 +182,33 @@ class Chapter extends Component {
         },
       },
       {
+        title: "视频",
+        //  dataIndex: "free",
+        render: value => {
+          if(!value.free) return 
+          return <Button onClick={this.showModal(value.video)}>预览</Button>
+        }
+      },
+      {
         title: "操作",
         width: 300,
         fixed: "right",
-        render: (data) => {
+        render: data => {
           // if ("free" in data) {
-            return (
+            return  (
               <div>
-                <Tooltip title="新增课时">
-                  <Button type='primary' onClick={this.handleGoAddLesson}>
+               {data.free === undefined && <Tooltip title="新增课时">
+                  <Button type='primary' style={{marginRight: 10}} onClick={this.handleGoAddLesson(data)}>
                     <PlusOutlined />
                   </Button>
-                </Tooltip>
-                <Tooltip title="更新章节">
-                  <Button type="primary" style={{ margin: "0 10px" }}>
+                </Tooltip>}
+                <Tooltip title={data.free === undefined ? '更新章节' : '更新课时'}>
+                  <Button type="primary" style={{marginRight: 10}}>
                     <FormOutlined />
                   </Button>
                 </Tooltip>
-                <Tooltip title="删除章节">
-                  <Button type="danger">
+                <Tooltip title={data.free === undefined ? '更新章节' : '更新课时'}>
+                  <Button style={{marginRight: 10}} type="danger">
                     <DeleteOutlined />
                   </Button>
                 </Tooltip>
@@ -149,80 +219,21 @@ class Chapter extends Component {
       },
     ];
 
-    const data = [
-      {
-        id: "111",
-        title: "第一章节",
-        children: [
-          {
-            id: "1",
-            title: "第一课时",
-            free: false,
-            videoSourceId: "756cf06db9cb4f30be85a9758b19c645",
-          },
-          {
-            id: "2",
-            title: "第二课时",
-            free: true,
-            videoSourceId: "2a02d726622f4c7089d44cb993c531e1",
-          },
-          {
-            id: "3",
-            title: "第三课时",
-            free: true,
-            videoSourceId: "4e560c892fdf4fa2b42e0671aa42fa9d",
-          },
-        ],
-      },
-      {
-        id: "222",
-        title: "第二章节",
-        children: [
-          {
-            id: "4",
-            title: "第一课时",
-            free: false,
-            videoSourceId: "756cf06db9cb4f30be85a9758b19c645",
-          },
-          {
-            id: "5",
-            title: "第二课时",
-            free: true,
-            videoSourceId: "2a02d726622f4c7089d44cb993c531e1",
-          },
-          {
-            id: "6",
-            title: "第三课时",
-            free: true,
-            videoSourceId: "4e560c892fdf4fa2b42e0671aa42fa9d",
-          },
-        ],
-      },
-      {
-        id: "333",
-        title: "第三章节",
-        children: [
-          {
-            id: "1192252824606289921",
-            title: "第一课时",
-            free: false,
-            videoSourceId: "756cf06db9cb4f30be85a9758b19c645",
-          },
-          {
-            id: "1192628092797730818",
-            title: "第二课时",
-            free: true,
-            videoSourceId: "2a02d726622f4c7089d44cb993c531e1",
-          },
-          {
-            id: "1192632495013380097",
-            title: "第三课时",
-            free: true,
-            videoSourceId: "4e560c892fdf4fa2b42e0671aa42fa9d",
-          },
-        ],
-      },
-    ];
+    const sources = {
+      hd: {
+        play_url: this.state.video, //真正需要的属性 , 预览视频的路径
+        // 下面这些属性,其实不写也可以,但是会提示这个必须属性,所以为了不展示错误提示,加了这些属性,值随便写就可以
+        bitrate: 1,
+        duration: 1000,
+        format: '',
+        height: 500,
+        size: 160000,
+        width: 500
+      }
+      // sd: {
+      //   // play_url:
+      // }
+    }
 
     const rowSelection = {
       selectedRowKeys,
@@ -242,10 +253,10 @@ class Chapter extends Component {
                 <PlusOutlined />
                 <span>新增</span>
               </Button>
-              <Button type="danger" style={{ marginRight: 10 }}>
-                <span>批量删除</span>
+              <Button type="danger" style={{ marginRight: 10 }} onClick={this.handleBatchDel}>
+                <span >批量删除</span>
               </Button>
-              <Tooltip title="全屏" className="course-table-btn">
+              <Tooltip title="全屏" className="course-table-btn" onClick={this.handlescreenFull}>
                 <FullscreenOutlined />
               </Tooltip>
               <Tooltip title="刷新" className="course-table-btn">
@@ -280,11 +291,19 @@ class Chapter extends Component {
         </div>
 
         <Modal
+        title = '视频'
           visible={previewVisible}
           footer={null}
           onCancel={this.handleImgModal}
+          footer = {null}
+          destroyOnClose = {true}
         >
-          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+         <Player
+          sources = {sources}
+          id = {'2'}
+          cover = {'http://localhost:3000/logo512.png'}
+          duration = {1000}
+         ></Player>
         </Modal>
       </div>
     );

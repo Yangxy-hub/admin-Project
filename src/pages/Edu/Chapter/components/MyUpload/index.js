@@ -1,6 +1,7 @@
 // 上传视频逻辑比较复杂,所以自定义个组件,包裹antd中upload组件,那么对应的上传的逻辑都写在这个组件中
 import React, { Component } from 'react'
 import { Upload, Button, message } from 'antd'
+
 import { UploadOutlined } from '@ant-design/icons'
 
 import { reqGetQiniuToken } from '@api/edu/lesson'
@@ -84,7 +85,8 @@ export default class MyUpload extends Component {
 
     // token 就是七牛云返回的token
     const token = this.state.uploadToken
-
+    
+    console.log(token)
     // putExtra 上传的额外配置项  可以配置上传文件的类型
     // 可以上传所有格式的视频
     // 后台限制上传文件的类型,不是视频,就不能上传成功
@@ -95,6 +97,8 @@ export default class MyUpload extends Component {
     const config = {
       region: qiniu.region.z2
     }
+
+    console.log(file, key, token, putExtra, config)
 
     const observable = qiniu.upload(file, key, token, putExtra, config)
 
@@ -114,12 +118,12 @@ export default class MyUpload extends Component {
         // 上传成功会调用. 展示一个上传成功的样式
         value.onSuccess(res)
   
-        console.log(res.key)
+        // console.log(res.key)
         this.props.onChange('http://qdgfsh13k.bkt.clouddn.com/' + res.key)
       }
     }
     this.subscription = observable.subscribe(observer) // 上传开始
-  }
+   }
   // 如果组件卸载,上传取消
   componentWillUnmount() {
     this.subscription && this.subscription.unsubscribe() // 上传取消

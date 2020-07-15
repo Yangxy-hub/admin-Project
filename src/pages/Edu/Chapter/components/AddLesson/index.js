@@ -32,9 +32,9 @@ class AddLesson extends Component {
     // console.log(this.props)
     //要发送请求,添加课时
     // 问题: 如何获取chapterId
-    // console.log( this.props.location.state._id)
+    console.log(this.props)
     const chapterId = this.props.location.state._id
-    console.log(chapterId)
+    // console.log(chapterId)
 
     const data = {
       ...values,

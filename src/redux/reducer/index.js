@@ -10,6 +10,7 @@ import { menuList } from "@pages/Acl/Permission/redux";
 // 增加了 subject 功能代码  和 chapterList 的 reduer
 import { SubjectList } from "@pages/Edu/Subject/redux";
 import {chapterList} from '@pages/Edu/Chapter/redux'
+import {courseList} from '@pages/Edu/Course/redux'
 
 
 export default combineReducers({
@@ -20,5 +21,6 @@ export default combineReducers({
   roleList,
   menuList,
   SubjectList,
-  chapterList
+  chapterList,
+  courseList
 });

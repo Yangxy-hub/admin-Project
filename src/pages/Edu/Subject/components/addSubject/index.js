@@ -10,7 +10,6 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 import {reqGetSubjectList, reqAddSubjectList} from '@api/edu/subject'
 // 导入样式
 import './index.less'
-// import { connect } from 'react-redux'
 
 // 获取option组件
 const Option = Select.Option

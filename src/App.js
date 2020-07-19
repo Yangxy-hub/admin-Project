@@ -27,6 +27,7 @@ import './assets/css/reset.css'
 function App() {
   const [locale, setLocale] = useState('zh')
 
+ 
   useEffect(() => {
     const token = PubSub.subscribe('LANGUAGE', (messge, data) => {
       console.log(data)
@@ -35,6 +36,7 @@ function App() {
       return () => {
         PubSub.unsubscribe(token)
       }
+      
     })
   }, [])
   // 通过window.navigator获取当前浏览器的语言环境

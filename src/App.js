@@ -31,7 +31,6 @@ function App() {
   useEffect(() => {
     const token = PubSub.subscribe('LANGUAGE', (messge, data) => {
       console.log(data)
-
       setLocale(data)
       return () => {
         PubSub.unsubscribe(token)

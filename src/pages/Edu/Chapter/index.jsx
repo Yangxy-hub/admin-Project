@@ -42,7 +42,7 @@ class Chapter extends Component {
     previewImage: "",
     selectedRowKeys: [],
     video: ''
-  };
+  }
 
   // video就是要预览的视频的路径
   showModal = video => () => {

@@ -22,7 +22,9 @@ function SearchForm(props) {
 
   // 利用useEffect 实现组件挂载获取数据
   useEffect(() => {
+    let isUnmount = false
     async function fetchData() {
+     
       // 等所有数据响应成功后， 会拿到对应的数据
       const [teachers, subjectList] = await Promise.all([
         reqGetAllTeacherList(),
@@ -38,7 +40,6 @@ function SearchForm(props) {
       })
       setSubjectList(options)
       setTeacherList(teachers)
-
     }
     fetchData()
   }, [])

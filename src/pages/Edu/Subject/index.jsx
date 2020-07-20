@@ -132,10 +132,11 @@ class Subject extends Component {
         if (
           this.currentPage !== 1 &&
           this.props.subjectList.items.length === 1 &&
-          totalPage === this.this.currentPage
+          totalPage === this.currentPage
         ) {
-          console.log(111)
+          // console.log(111)
           this.props.getSubjectList(--this.currentPage, this.pageSize)
+          return 
         }
         this.props.getSubjectList(this.currentPage, this.pageSize)
       }

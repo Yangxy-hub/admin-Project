@@ -1,18 +1,20 @@
 import React, { Component } from "react";
 
 import Analysis from "./Analysis";
-import Monitor from "./Monitor";
-import Search from "./Search";
-import Statistics from "./Statistics";
+
+// 使用的语法版本不相同
+// import Monitor from "./Monitor";
+// import Search from "./Search";
+// import Statistics from "./Statistics";
 
 export default class Admin extends Component {
   render() {
     return (
       <div>
         <Analysis />
-        <Monitor />
+        {/* <Monitor />
         <Search />
-        <Statistics />
+        <Statistics /> */}
       </div>
     );
   }

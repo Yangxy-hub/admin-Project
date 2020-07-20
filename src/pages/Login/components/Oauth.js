@@ -9,7 +9,7 @@ class Oauth extends Component {
         const token = window.location.search.split('=')[1]
         console.log(token)
         // 2.把token存储到redux中
-        this.props.dispatch(loginSuccessSync(token))
+        this.props.dispatch(loginSuccessSync({token}))
         // 3.把token存储到本地缓存中
         localStorage.setItem('user_token', token)
         // 4.跳转到首页

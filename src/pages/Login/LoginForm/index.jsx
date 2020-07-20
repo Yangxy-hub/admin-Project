@@ -121,10 +121,10 @@ function LoginForm (props){
     setActiveKey(key)
   }
 
+  // Git 第三方授权登录点击事件
   const gitOauthLogin = () => {
-    
+    window.location.href = 'https://github.com/login/oauth/authorize?client_id=3fcb0302b62da6ef5e17'
   }
-
 
     return (
       <>

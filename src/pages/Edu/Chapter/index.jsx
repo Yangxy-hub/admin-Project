@@ -208,7 +208,7 @@ class Chapter extends Component {
           },
         ],
       },
-    ];
+    ]
 
     const rowSelection = {
       selectedRowKeys,
